@@ -1,0 +1,48 @@
+{% extends 'short_url/__base.html' %}
+
+
+{% block content %}
+{% if messages %}
+    <div class="alert alert-warning">
+        <div class="container">
+            {% for message in messages %}
+              {{ message }}
+            {% endfor %}       
+        </div>
+    </div>
+{% endif %}
+<br>
+<div class='container'>
+    <div class="row justify-content-md-center">
+        <div class="col-md-6">
+          <h3 class="mb-3 text-center">{{ title|escape }}<subpart\></h3>
+            <form>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">URL:</label>
+                    <input type="url" class="form-control" id="exampleInputEmail1" placeholder="Введите url">
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">subpart (по желанию):</label>
+                    <input type="text" class="form-control" id="exampleInputPassword1" placeholder="subpart (по желанию)">
+                </div>
+                   
+                <button type="submit" class="btn btn-primary">Получить ссылку</button>
+            </form>
+
+            </div>
+    
+    {% if  url_data %}
+    <div class="row justify-content-md-center">
+        <div class="col-md-6">
+            {% for item in url_data %}
+                <p>{{ item.created }}</p>
+                <p>{{ item.long_url }}</p>
+                <p><a href="{{ item.long_url }}">{{ item.short_url_subpart }}</a></p>
+                <hr>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>    
+{% endblock content %}
