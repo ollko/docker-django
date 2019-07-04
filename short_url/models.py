@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models.signals import pre_save
-import secrets
+
 from secrets import token_urlsafe
 
 
