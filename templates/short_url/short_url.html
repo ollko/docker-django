@@ -14,8 +14,8 @@
 <br>
 <div class='container'>
     <div class="row justify-content-md-center">
-        <div class="col-md-6">
-          <h3 class="mb-3 text-center">{{ title|escape }}<subpart\></h3>
+        <div class="col-md-6 form-block">
+            <h3 class="mb-3 text-center">{{ title|escape }}</h3>
             <form>
                 <div class="form-group">
                     <label for="exampleInputEmail1">URL:</label>
@@ -27,24 +27,148 @@
                     <input type="text" class="form-control" id="exampleInputPassword1" placeholder="subpart (по желанию)">
                 </div>
                    
-                <button type="submit" class="btn btn-primary">Получить ссылку</button>
+                <button type="submit" class="btn btn-primary submit-btn">Получить ссылку</button>
             </form>
 
-            </div>
-    
-    {% if  url_data %}
-    <div class="row justify-content-md-center">
-        <div class="col-md-6">
-            {% for item in url_data %}
-                <p>{{ item.created }}</p>
-                <p>{{ item.long_url }}</p>
-                <p><a href="{{ item.long_url }}">{{ item.short_url_subpart }}</a></p>
-                <hr>
-            {% endfor %}
         </div>
     </div>
-    {% endif %}
-
 </div>
+<div class='container' id="url-container">
+    
+</div>
+
    <h1>{{ user_id }}</h1>    
 {% endblock content %}
+
+{% block javascript2 %}
+<!-- <script>
+$(document).ready(function(){
+
+   $.ajax({
+        method: "GET",
+        url: '/api',
+        success: handleFormSuccess,
+        error: handleFormError,
+    })
+
+    function handleFormSuccess(data, textStatus, jqXHR){
+        console.log(data)
+        console.log(textStatus)
+        console.log(jqXHR.responseJSON)
+
+    }
+
+    function handleFormError(jqXHR, textStatus, errorThrown){
+        console.log(jqXHR.responseJSON)
+        console.log(textStatus)
+        console.log(errorThrown)
+    }
+})
+</script> -->
+
+<script>
+// $(document).ready(function(){
+//     var $myForm = $('.my-ajax-form')
+//     $myForm.submit(function(event){
+//         event.preventDefault()
+//         var $formData = $(this).serialize()
+//         // console.log($(this))
+//         var $endpoint = $myForm.attr('data-url') || window.location.href
+//         checkFormData($formData, $endpoint);
+        
+//     })
+// })
+$(document).ready(function(){
+    var endpoint = '/api';
+    getUrlTableData( endpoint ).then( urlData => {
+        var $urlContainer = $('#url-container');
+        console.log(typeof(urlData));
+        urlData.forEach( (item, index) => {
+            $urlContainer.append (
+                `
+                <div class="row justify-content-md-center url-block">
+                    <div class="col-md-7 ">
+                    <time class="bitlink-item--created-date" datetime="2019-06-28">Jun 28</time>
+                        <p>${ item.created }</p>
+                        <p>${ item.long_url }</p>
+                        <p><a href="${ item.long_url }">${ item.short_url_subpart }</a></p>
+                    </div>
+                </div>`
+            );
+        });
+    })
+})
+
+function getUrlTableData( url ) {
+    return new Promise(function(resolve, reject) {
+
+        var reg = new XMLHttpRequest();
+        reg.open('GET', url);
+        // To POST data like an HTML form, add an HTTP header with setRequestHeader()
+        reg.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        //To perform this request as ajax:
+        reg.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        // reg.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+
+        reg.onload = function() {
+            if (reg.readyState == 4 && reg.status == 200) {
+                        console.log('11111111');
+
+                console.log(reg.statusText)
+                console.log(reg.response)
+                resolve(JSON.parse(reg.response));
+            } else {
+                console.log('222222222');
+
+                console.log('reg.readyState = ',reg.readyState)
+                console.log('reg.status = ',reg.status)
+                reject({
+                    status: this.status,
+                    response: JSON.parse(reg.response)
+                });
+            }
+        };
+        reg.onerror = function() {
+            reject(Error('Network Error'));
+        };
+
+        reg.send(null);
+    })
+}
+
+function checkFormData(data, url) {
+    return new Promise(function(resolve, reject) {
+        var reg = new XMLHttpRequest();
+        reg.open('POST', url);
+        // To POST data like an HTML form, add an HTTP header with setRequestHeader()
+        reg.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        //To perform this request as ajax:
+        reg.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        reg.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+
+        reg.onload = function() {
+            if (reg.readyState == 4 && reg.status == 200) {
+                console.log(reg.statusText)
+                console.log(reg.response)
+                resolve(reg.statusText);
+            } else {
+                console.log('reg.readyState = ',reg.readyState)
+                console.log('reg.status = ',reg.status)
+                reject({
+                    status: this.status,
+                    response: JSON.parse(reg.response)
+                });
+                // reject(Error(req.statusText));
+            }
+        };
+        reg.onerror = function() {
+            reject(Error('Network Error'));
+        };
+        reg.send(data);
+        
+    })
+}
+
+
+</script>
+{% endblock javascript2 %}

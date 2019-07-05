@@ -20,5 +20,9 @@ from short_url import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.ShortUrlView.as_view(), name='short-url'),
-    path('api/', include('short_url.api.urls'))
+    path('api/', include('short_url.api.urls')),
+
+
 ]
+
+
