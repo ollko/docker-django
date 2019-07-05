@@ -37,7 +37,7 @@
     
 </div>
 
-   <h1>{{ user_id }}</h1>    
+   <h1 id="user-id">{{ user_id }}</h1>    
 {% endblock content %}
 
 {% block javascript2 %}
@@ -79,27 +79,30 @@ $(document).ready(function(){
 //     })
 // })
 $(document).ready(function(){
-    var endpoint = '/api';
-    getUrlTableData( endpoint ).then( urlData => {
-        var $urlContainer = $('#url-container');
-        console.log(typeof(urlData));
-        urlData.forEach( (item, index) => {
-            $urlContainer.append (
-                `
-                <div class="row justify-content-md-center url-block">
-                    <div class="col-md-7 ">
-                    <time class="bitlink-item--created-date" datetime="2019-06-28">Jun 28</time>
-                        <p>${ item.created }</p>
-                        <p>${ item.long_url }</p>
-                        <p><a href="${ item.long_url }">${ item.short_url_subpart }</a></p>
-                    </div>
-                </div>`
-            );
-        });
-    })
+    var userId = $('#user-id').text();
+    if ( userId ) {
+        var endpoint = `/api/${ userId }`;
+        getApiData( endpoint ).then( urlData => {
+            var $urlContainer = $('#url-container');
+            console.log(typeof(urlData));
+            urlData.forEach( (item, index) => {
+                $urlContainer.append (
+                    `<div class="row justify-content-md-center url-block">
+                        <div class="col-md-7 ">
+                        <time class="bitlink-item--created-date" datetime="2019-06-28">Jun 28</time>
+                            <p>${ item.created }</p>
+                            <p>${ item.long_url }</p>
+                            <p><a href="${ item.long_url }">${ item.short_url_subpart }</a></p>
+                        </div>
+                    </div>`
+                );
+            });
+        })
+    }
+ 
 })
 
-function getUrlTableData( url ) {
+function getApiData( url ) {
     return new Promise(function(resolve, reject) {
 
         var reg = new XMLHttpRequest();
@@ -107,7 +110,7 @@ function getUrlTableData( url ) {
         // To POST data like an HTML form, add an HTTP header with setRequestHeader()
         reg.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         //To perform this request as ajax:
-        reg.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        // reg.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         // reg.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
 
         reg.onload = function() {

@@ -4,10 +4,11 @@ from django.db.models.signals import pre_save
 from secrets import token_urlsafe
 
 
+
 class Url(models.Model):
     user_id = models.CharField(max_length = 16)
     long_url = models.URLField(max_length = 200)
-    short_url_subpart = models.SlugField(default='subpart', blank = True)
+    short_url_subpart = models.SlugField(default='subpart', blank = True, unique = True)
     created = models.DateTimeField(auto_now = True)
 
     def __str__(self):
