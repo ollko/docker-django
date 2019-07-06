@@ -16,15 +16,16 @@
     <div class="row justify-content-md-center">
         <div class="col-md-6 form-block">
             <h3 class="mb-3 text-center">{{ title|escape }}</h3>
-            <form>
-                <div class="form-group">
+            <form id="url-form">
+                <div class="form-group" id="form-group-long_url">
                     <label for="exampleInputEmail1">URL:</label>
-                    <input type="url" class="form-control" id="exampleInputEmail1" placeholder="Введите url">
-                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                    <input type="url" name="long_url"class="form-control" id="exampleInputEmail1" placeholder="Введите url">
+                    <small id="form-group-url" class="form-group-error form-text text-muted"></small>
                 </div>
-                <div class="form-group">
+                <div class="form-group" id = "form-group-subpart">
                     <label for="exampleInputPassword1">subpart (по желанию):</label>
-                    <input type="text" class="form-control" id="exampleInputPassword1" placeholder="subpart (по желанию)">
+                    <input type="text" name="short_url_subpart" class="form-control" id="exampleInputPassword1" placeholder="subpart (по желанию)">
+                    <small id="form-group-subpart" class="form-group-error form-text text-muted"></small>
                 </div>
                    
                 <button type="submit" class="btn btn-primary submit-btn">Получить ссылку</button>
@@ -41,90 +42,94 @@
 {% endblock content %}
 
 {% block javascript2 %}
-<!-- <script>
-$(document).ready(function(){
-
-   $.ajax({
-        method: "GET",
-        url: '/api',
-        success: handleFormSuccess,
-        error: handleFormError,
-    })
-
-    function handleFormSuccess(data, textStatus, jqXHR){
-        console.log(data)
-        console.log(textStatus)
-        console.log(jqXHR.responseJSON)
-
-    }
-
-    function handleFormError(jqXHR, textStatus, errorThrown){
-        console.log(jqXHR.responseJSON)
-        console.log(textStatus)
-        console.log(errorThrown)
-    }
-})
-</script> -->
-
 <script>
-// $(document).ready(function(){
-//     var $myForm = $('.my-ajax-form')
-//     $myForm.submit(function(event){
-//         event.preventDefault()
-//         var $formData = $(this).serialize()
-//         // console.log($(this))
-//         var $endpoint = $myForm.attr('data-url') || window.location.href
-//         checkFormData($formData, $endpoint);
-        
-//     })
-// })
 $(document).ready(function(){
     var userId = $('#user-id').text();
+    var listCreateUrl = `/api/${ userId }`;
+    // var retrieveUrl = `/api/${ objUrl }`
+    var $urlForm = $('#url-form');
+
     if ( userId ) {
-        var endpoint = `/api/${ userId }`;
-        getApiData( endpoint ).then( urlData => {
-            var $urlContainer = $('#url-container');
-            console.log(typeof(urlData));
-            urlData.forEach( (item, index) => {
-                $urlContainer.append (
-                    `<div class="row justify-content-md-center url-block">
-                        <div class="col-md-7 ">
-                        <time class="bitlink-item--created-date" datetime="2019-06-28">Jun 28</time>
-                            <p>${ item.created }</p>
-                            <p>${ item.long_url }</p>
-                            <p><a href="${ item.long_url }">${ item.short_url_subpart }</a></p>
-                        </div>
-                    </div>`
-                );
-            });
-        })
+        get( listCreateUrl ).then( function(data) {
+            setListOfUrlForCurrentUser(data)
+        }).catch( function() {
+             console.log(`status: ${status}, response: ${response}`);
+        });
+           
     }
- 
+
+    function setListOfUrlForCurrentUser( data ) {
+        var $urlContainer = $('#url-container');
+        data.forEach( (item, index) => {
+            $urlContainer.append (
+                `<div class="row justify-content-md-center url-block">
+                    <div class="col-md-7 data-url-block">
+                    <time class="bitlink-item--created-date" datetime="2019-06-28">Jun 28</time>
+                        <p>${ item.created }</p>
+                        <p>${ item.long_url }</p>
+                        <p><a href="${ item.long_url }">${ item.short_url_subpart }</a></p>
+                    </div>
+                </div>`
+            );
+        });
+    }
+
+    $urlForm.submit(function(event){
+        event.preventDefault();
+        var $formData = $(this).serializeArray();
+        jsonData = SerializeArrayToJson($formData);
+        
+        post( '/api/', jsonData )
+            .then( function(res) {
+                console.log(reg.statusText);
+            })
+            .catch(function(error) {
+                setValidationError(error);
+                console.log(error);
+
+
+        })   
+    })
 })
 
-function getApiData( url ) {
+function setValidationError(error){
+    err = error.response;
+    for ( var key in err ) {
+        $element = $('#form-group-'+ key);
+        newSmallEl = $( "<small>" ,{
+            class: 'form-group-error form-text text-danger ',
+            text: err[ key ]
+        });
+        console.log(typeof(err));
+        console.log( err[ key ] )
+        console.log($('#form-group-' + key))
+        $('#form-group-' + key).append(newSmallEl);
+    }
+}
+
+function SerializeArrayToJson(formData) {//serialize data function
+    var data = {};
+    for (var i = 0; i < formData.length; i++){
+        data[formData[i]['name']] = formData[i]['value'];
+    }
+
+    data.user_id = $('#user-id').text();
+        return JSON.stringify(data)
+    }
+
+
+function get( url ) {
     return new Promise(function(resolve, reject) {
-
         var reg = new XMLHttpRequest();
-        reg.open('GET', url);
-        // To POST data like an HTML form, add an HTTP header with setRequestHeader()
-        reg.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        //To perform this request as ajax:
-        // reg.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        // reg.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
-
+        reg.open('GET', url, true);
         reg.onload = function() {
             if (reg.readyState == 4 && reg.status == 200) {
-                        console.log('11111111');
-
-                console.log(reg.statusText)
-                console.log(reg.response)
+                // console.log(reg.statusText)
+                // console.log(reg.response)
                 resolve(JSON.parse(reg.response));
             } else {
-                console.log('222222222');
-
-                console.log('reg.readyState = ',reg.readyState)
-                console.log('reg.status = ',reg.status)
+                // console.log('reg.readyState = ',reg.readyState)
+                // console.log('reg.status = ',reg.status)
                 reject({
                     status: this.status,
                     response: JSON.parse(reg.response)
@@ -134,25 +139,21 @@ function getApiData( url ) {
         reg.onerror = function() {
             reject(Error('Network Error'));
         };
-
         reg.send(null);
     })
 }
 
-function checkFormData(data, url) {
+function post(url, data) {
     return new Promise(function(resolve, reject) {
         var reg = new XMLHttpRequest();
-        reg.open('POST', url);
-        // To POST data like an HTML form, add an HTTP header with setRequestHeader()
-        reg.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        //To perform this request as ajax:
-        reg.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        reg.open('POST', url, true);
+        reg.setRequestHeader('Content-type','application/json; charset=utf-8');
         reg.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
 
         reg.onload = function() {
-            if (reg.readyState == 4 && reg.status == 200) {
-                console.log(reg.statusText)
-                console.log(reg.response)
+            if (reg.readyState == 4 && reg.status == 201) {
+                // console.log(reg.statusText)
+                // console.log(reg.response)
                 resolve(reg.statusText);
             } else {
                 console.log('reg.readyState = ',reg.readyState)
@@ -161,17 +162,14 @@ function checkFormData(data, url) {
                     status: this.status,
                     response: JSON.parse(reg.response)
                 });
-                // reject(Error(req.statusText));
             }
         };
         reg.onerror = function() {
             reject(Error('Network Error'));
         };
         reg.send(data);
-        
     })
 }
-
 
 </script>
 {% endblock javascript2 %}

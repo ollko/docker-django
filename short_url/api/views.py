@@ -12,5 +12,8 @@ class UrlAPIListCreateAPIView(generics.ListCreateAPIView):
         This view should return a list of all the purchases for
         the user as determined by the username portion of the URL.
         """
-        user_id = self.kwargs['user_id']
-        return Url.objects.filter(user_id=user_id)
+        queryset = Url.objects.all()
+        user_id = self.kwargs.get('user_id', None)
+        if user_id is not None:
+            queryset = queryset.filter(user_id=user_id)
+        return queryset

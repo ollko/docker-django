@@ -2,3 +2,8 @@
 .form-block, .url-block{
 	margin-bottom: 1em;
 }
+
+.data-url-block {
+	border: 2px solid #c415c56b;
+    border-radius: .25em;
+}
