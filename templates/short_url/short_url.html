@@ -18,12 +18,12 @@
             <h3 class="mb-3 text-center">{{ title|escape }}</h3>
             <form id="url-form">
                 <div class="form-group" id="form-group-long_url">
-                    <label for="exampleInputEmail1">URL:</label>
+                    <label for="exampleInputEmail1">URL*:</label>
                     <input type="url" name="long_url"class="form-control" id="exampleInputEmail1" placeholder="Введите url">
                     <small id="form-group-url" class="form-group-error form-text text-muted"></small>
                 </div>
-                <div class="form-group" id = "form-group-subpart">
-                    <label for="exampleInputPassword1">subpart (по желанию):</label>
+                <div class="form-group" id = "form-group-short_url_subpart">
+                    <label for="exampleInputPassword1">SUBPART (по желанию):</label>
                     <input type="text" name="short_url_subpart" class="form-control" id="exampleInputPassword1" placeholder="subpart (по желанию)">
                     <small id="form-group-subpart" class="form-group-error form-text text-muted"></small>
                 </div>
@@ -94,16 +94,15 @@ $(document).ready(function(){
 
 function setValidationError(error){
     err = error.response;
+    $('.form-group-error').remove()
     for ( var key in err ) {
-        $element = $('#form-group-'+ key);
-        newSmallEl = $( "<small>" ,{
+        newEl = $( "<small>" ,{
             class: 'form-group-error form-text text-danger ',
             text: err[ key ]
         });
-        console.log(typeof(err));
         console.log( err[ key ] )
         console.log($('#form-group-' + key))
-        $('#form-group-' + key).append(newSmallEl);
+        $('#form-group-' + key).append(newEl);
     }
 }
 
