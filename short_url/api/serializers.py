@@ -15,4 +15,4 @@ class UrlSerializer(serializers.Serializer):
 
 
     def create(self, validated_data):
-        return Url(**validated_data)
+        return Url.objects.create(**validated_data)

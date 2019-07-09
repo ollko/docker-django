@@ -14,6 +14,10 @@ class Url(models.Model):
     def __str__(self):
         return self.long_url
 
+    class Meta:
+        ordering = ['-created']
+        verbose_name = u'Пара'
+        verbose_name_plural = u'Параы'
 
 def pre_save_receiver_url_model(sender, instance, *args, **kwargs):
     if instance.short_url_subpart == 'subpart' or instance.short_url_subpart == '':

@@ -45,12 +45,10 @@
 <script>
 $(document).ready(function(){
     var userId = $('#user-id').text();
-    var listCreateUrl = `/api/${ userId }`;
-    // var retrieveUrl = `/api/${ objUrl }`
     var $urlForm = $('#url-form');
 
     if ( userId ) {
-        get( listCreateUrl ).then( function(data) {
+        get( `/api/${ userId }` ).then( function(data) {
             setListOfUrlForCurrentUser(data)
         }).catch( function() {
              console.log(`status: ${status}, response: ${response}`);
@@ -62,7 +60,7 @@ $(document).ready(function(){
         var $urlContainer = $('#url-container');
         data.forEach( (item, index) => {
             $urlContainer.append (
-                `<div class="row justify-content-md-center url-block">
+                `<div class="row justify-content-md-center url-block ">
                     <div class="col-md-7 data-url-block">
                     <time class="bitlink-item--created-date" datetime="2019-06-28">Jun 28</time>
                         <p>${ item.created }</p>
@@ -78,21 +76,37 @@ $(document).ready(function(){
         event.preventDefault();
         var $formData = $(this).serializeArray();
         jsonData = SerializeArrayToJson($formData);
-        
+        var userId = $('#user-id').text();
+
         post( '/api/', jsonData )
-            .then( function(res) {
-                console.log(reg.statusText);
+            .then(function(response) {
+                AddNewUrlPair(response.response);
+            }, function(error){
+                setErrorMessagesToForm(error);
             })
-            .catch(function(error) {
-                setValidationError(error);
-                console.log(error);
-
-
-        })   
+            .then(function() {
+                console.log("All done!");
+            })
     })
 })
 
-function setValidationError(error){
+function AddNewUrlPair(item) {
+    return new Promise(function(resolve, reject) {
+        var $urlContainer = $('#url-container');
+        $urlContainer.prepend(
+            `<div class="row justify-content-md-center url-block new-url-block">
+                <div class="col-md-7 data-url-block">
+                <time class="bitlink-item--created-date" datetime="2019-06-28">Jun 28</time>
+                    <p>${ item.created }</p>
+                    <p>${ item.long_url }</p>
+                    <p><a href="${ item.long_url }">${ item.short_url_subpart }</a></p>
+                </div>
+            </div>`
+        );
+    })
+}
+    
+function setErrorMessagesToForm(error){
     err = error.response;
     $('.form-group-error').remove()
     for ( var key in err ) {
@@ -123,12 +137,12 @@ function get( url ) {
         reg.open('GET', url, true);
         reg.onload = function() {
             if (reg.readyState == 4 && reg.status == 200) {
-                // console.log(reg.statusText)
-                // console.log(reg.response)
+                console.log(reg.statusText)
+                console.log(reg.response)
                 resolve(JSON.parse(reg.response));
             } else {
-                // console.log('reg.readyState = ',reg.readyState)
-                // console.log('reg.status = ',reg.status)
+                console.log('reg.readyState = ',reg.readyState)
+                console.log('reg.status = ',reg.status)
                 reject({
                     status: this.status,
                     response: JSON.parse(reg.response)
@@ -151,9 +165,12 @@ function post(url, data) {
 
         reg.onload = function() {
             if (reg.readyState == 4 && reg.status == 201) {
-                // console.log(reg.statusText)
-                // console.log(reg.response)
-                resolve(reg.statusText);
+                console.log(reg.statusText)
+                console.log(reg.response)
+                resolve({
+                    status: this.status,
+                    response: JSON.parse(reg.response)
+                });
             } else {
                 console.log('reg.readyState = ',reg.readyState)
                 console.log('reg.status = ',reg.status)
