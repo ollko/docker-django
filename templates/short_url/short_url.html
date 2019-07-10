@@ -65,7 +65,11 @@ $(document).ready(function(){
                     <time class="bitlink-item--created-date" datetime="2019-06-28">Jun 28</time>
                         <p>${ item.created }</p>
                         <p>${ item.long_url }</p>
-                        <p><a href="${ item.long_url }">${ item.short_url_subpart }</a></p>
+                        <p >
+                            <div class="col">
+                                <a href="${ item.long_url }">${ item.short_url_subpart }</a>
+                            </div>                      
+                        </p>
                     </div>
                 </div>`
             );
@@ -84,7 +88,8 @@ $(document).ready(function(){
             }, function(error){
                 setErrorMessagesToForm(error);
             })
-            .then(function() {
+            .then(function($formData) {
+                $urlForm[0].reset();
                 console.log("All done!");
             })
     })
@@ -94,7 +99,7 @@ function AddNewUrlPair(item) {
     return new Promise(function(resolve, reject) {
         var $urlContainer = $('#url-container');
         $urlContainer.prepend(
-            `<div class="row justify-content-md-center url-block new-url-block">
+            `<div class="row justify-content-md-center url-block animated bounceInLeft">
                 <div class="col-md-7 data-url-block">
                 <time class="bitlink-item--created-date" datetime="2019-06-28">Jun 28</time>
                     <p>${ item.created }</p>
@@ -103,6 +108,9 @@ function AddNewUrlPair(item) {
                 </div>
             </div>`
         );
+        setTimeout(function() {
+            $('.url-block:first').removeClass('animated bounceInLeft');
+        }, 2000)
     })
 }
     
@@ -114,8 +122,6 @@ function setErrorMessagesToForm(error){
             class: 'form-group-error form-text text-danger ',
             text: err[ key ]
         });
-        console.log( err[ key ] )
-        console.log($('#form-group-' + key))
         $('#form-group-' + key).append(newEl);
     }
 }

@@ -4,6 +4,11 @@
 }
 
 .data-url-block {
-	border: 2px solid #c415c56b;
-    border-radius: .25em;
+	border: 2px solid green;
+    border-radius: .3em;
+}
+
+.new-url-block {
+	border: 2px solid green;
+    border-radius: .3em;
 }
