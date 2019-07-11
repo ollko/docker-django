@@ -36,5 +36,5 @@ class UrlRetrieveAPIView(generics.RetrieveAPIView):
         queryset = self.get_queryset()
         obj = queryset.first()
         if not obj:
-            raise Http404("Увы, что-то пошло не так :(")
+            raise Http404("Упсс..., что-то пошло не так :(")
         return obj
