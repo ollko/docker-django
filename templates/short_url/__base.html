@@ -1,4 +1,5 @@
 <!doctype html>
+{% load static %}
 <html lang="en">
   <head>
     <!-- Required meta tags -->
@@ -38,6 +39,7 @@
     </script>
 
     {% endblock javascript %}
+    <script type="text/javascript" src="{% static 'js/bitly.js' %}"></script>
 
     {% block javascript2 %}{% endblock javascript2 %}
 
