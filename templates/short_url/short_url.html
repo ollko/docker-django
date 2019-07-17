@@ -114,6 +114,7 @@ $(document).ready(function() {
                     } else {
                         console.log('reg.readyState = ',reg.readyState)
                         console.log('reg.status = ',reg.status)
+                        console.log('reg.status = ',reg.response)
                         reject({
                             status: this.status,
                             response: JSON.parse(reg.response)
@@ -221,7 +222,16 @@ $(document).ready(function() {
                     class: 'form-group-error form-text text-danger ',
                     text: err[ key ]
                 });
-                $('#form-group-' + key).append(newEl);
+                if ( key != 'non_field_errors' ) {
+                    $('#form-group-' + key).append(newEl);
+                } else {
+                    $('#form-group-long_url').prepend(newEl)
+                }
+            }
+            
+            var non_field_errors = err['non_field_errors']
+            if ( non_field_errors ) {
+
             }
         },
 
