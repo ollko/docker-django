@@ -3,6 +3,7 @@ from django.views.generic import TemplateView, RedirectView
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import Http404
 from django.shortcuts import get_object_or_404
+from django.core.cache import cache
 
 from secrets import token_hex
 
@@ -27,10 +28,23 @@ class ShortUrlView(TemplateView):
 class UrlRedirectView(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
-        url = super(UrlRedirectView, self).get_redirect_url(*args, **kwargs)
+        # url = super(UrlRedirectView, self).get_redirect_url(*args, **kwargs)
+        # try:
+        #     short_url = kwargs['short_url']
+        # except KeyError:
+        #     raise Http404()
+        # obj = get_object_or_404(Url, short_url_subpart = short_url)
+        # return obj.long_url
+
         try:
             short_url = kwargs['short_url']
         except KeyError:
             raise Http404()
-        obj = get_object_or_404(Url, short_url_subpart = short_url)
-        return obj.long_url
+        long_url = cache.get( short_url )
+        if long_url:
+            return long_url
+        else:
+            obj = get_object_or_404(Url, short_url_subpart = short_url)
+            long_url = obj.long_url
+            cache.set(short_url, obj.long_url)
+            return long_url
