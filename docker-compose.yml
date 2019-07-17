@@ -29,6 +29,7 @@ services:
         - "8000:8000"
       depends_on:
         - mysql
+        - redis
 
     mysql:
       image: mysql:5.6
@@ -43,3 +44,6 @@ services:
         - MYSQL_PASSWORD=dbpw
       ports:
         - "8306:3306"
+
+    redis:
+      image: "redis:alpine"
