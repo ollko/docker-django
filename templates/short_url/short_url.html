@@ -15,16 +15,17 @@
 <div class='container'>
     <div class="row justify-content-md-center">
         <div class="col-md-6 form-block">
-            <h3 class="mb-3 text-center">{{ title|escape }}</h3>
+            <h3 class="mb-3 text-center text-monospace">{{ title1 }}</h3>
+            <h4 class="mb-3 text-center text-monospace text-nowrap bd-highlight">{{ title2|escape }}</h4>
             <form id="url-form">
                 <div class="form-group" id="form-group-long_url">
-                    <label for="exampleInputEmail1">URL*:</label>
-                    <input type="url" name="long_url"class="form-control" id="exampleInputEmail1" placeholder="Введите url">
+                    <label for="long-url">URL*:</label>
+                    <input type="url" name="long_url"class="form-control" id="long-url" placeholder="Введите url">
                     <small id="form-group-url" class="form-group-error form-text text-muted"></small>
                 </div>
                 <div class="form-group" id = "form-group-short_url_subpart">
-                    <label for="exampleInputPassword1">SUBPART (по желанию):</label>
-                    <input type="text" name="short_url_subpart" class="form-control" id="exampleInputPassword1" placeholder="subpart (по желанию)">
+                    <label for="short-url-subpart">SUBPART (по желанию):</label>
+                    <input type="text" name="short_url_subpart" class="form-control" id="short-url-subpart" placeholder="subpart (по желанию)">
                     <small id="form-group-subpart" class="form-group-error form-text text-muted"></small>
                 </div>
                    
@@ -34,13 +35,15 @@
         </div>
     </div>
 </div>
+</br>
+<div class='container'>
     
 <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center" id="pagination-container">
 
     </ul>
 </nav>
-
+</div>
 
 <div class='container' id="url-container">
     
@@ -54,7 +57,7 @@
 $(document).ready(function() {
     var modelData = {
         currentPageEndpoint: null,
-
+        pagination: false
     };
 
     var octopus = {
@@ -128,58 +131,76 @@ $(document).ready(function() {
             })
         },
 
-        setPagination: function(data) {
-            var $paginationContainer = $('#pagination-container');
-            $paginationContainer.children().remove();
-            var totalPages = data.total_pages;
-            if ( totalPages > 1 ) {
-                var $pagination = $('.pagination');
-                if ( data.previous ) {
-                    $pagination.append (
-                    `<li class="page-item" id="page-previous">
-                        <a class="page-link" href="#" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                    `
-                    );
-                    $('#page-previous').click( function() {
-                        urlListView.render(data.previous);
-                    })
-                }
+        setPagination: function(data) {               
+            var userId = octopus.getUserId();
+            var totalPages = data.total_pages;         
+            var $pagination = $('.pagination');
+            
+            for (var i=1; i<=totalPages; i++){
+                $pagination.append (
+                    `<li class="page-item page-item-button" id="page-item-${i}"><a class="page-link"  href="#">${i}</a></li>`
+                );
+            };
+
+            $pagination.on('click', 'li.page-item-button', function() {
+                var buttonNumber = $( this ).text();
+                var currentPageEndpoint = `/api/${ userId }/?page=${buttonNumber}`;
+                urlListView.render(currentPageEndpoint);
                 
-                // alert('totalPages = ',totalPages);
-                for (var i=1; i<=totalPages; i++){
-
-                    $pagination.append (
-                        `<li class="page-item" id="page-item-${i}"><a class="page-link"  href="#">${i}</a></li>`
-                    );
-                    this.bindPaginationButton(i);
-                }
-
-                if ( data.next ) {
-                    $pagination.append (
-                    `<li class="page-item" id="page-next">
-                        <a class="page-link" href="#" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                    `
-                    );
-                    $('#page-next').click( function() {
-                        urlListView.render(data.next);
-                    });
-                }
-            }
+            });
+           
         },
 
-        bindPaginationButton: function(buttonNumber) {
-            var userId = this.getUserId();
-            var button = '#page-item-' + buttonNumber;
-            var currentPageEndpoint = `/api/${ userId }/?page=${buttonNumber}`;
-            $(button).click(function() {
-                urlListView.render(currentPageEndpoint);
-            })
+        setPreviousNextPaginationButtons: function(previous, next) {
+            var $pagination = $('.pagination');
+            $('.pagination-row').remove();
+
+            if ( previous ) {
+                $pagination.prepend (
+                `<li class="page-item pagination-row" id="page-previous">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                `
+                );
+                $('#page-previous').click( function() {
+                    urlListView.render( previous );
+                            
+                });
+            } else {
+                $pagination.prepend (
+                `<li class="page-item pagination-row disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo;</a>
+                </li>
+                `
+                );
+            }
+
+            $('#page-next').remove();
+            if ( next ) {
+                $pagination.append (
+                `<li class="page-item pagination-row" id="page-next">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                `
+                );
+                $('#page-next').click( function() {
+                    urlListView.render( next );
+                });
+            } else {
+                $pagination.append (
+                `<li class="page-item pagination-row disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&raquo;</a>
+                </li>
+                `
+                );
+            }
+            
+
+            
         },
 
         setListOfUrlForCurrentUser: function(data) {
@@ -189,18 +210,32 @@ $(document).ready(function() {
                 $urlContainer.append (
                     `<div class="row justify-content-md-center url-block ">
                         <div class="col-md-7 data-url-block">
-                        <time class="bitlink-item--created-date" datetime="2019-06-28">Jun 28</time>
-                            <p>${ item.created }</p>
-                            <p>${ item.long_url }</p>
-                            <p >
-                                <div class="col">
-                                    <a href="${ item.long_url }">${ item.short_url_subpart }</a>
-                                </div>                      
-                            </p>
+                            <div>
+                                <small class="text-muted">
+                                    ${ this.getDataTime(item.created) }
+                                </small>
+                            </div>
+                            <div><b>${ item.long_url }</b></div>
+                            <div >
+                                
+                                <a class="text-decoration-none" href="${ item.long_url }">${ item.short_url_subpart }</a>
+                                                      
+                            </div>
                         </div>
                     </div>`
                 );
             });
+            console.log('page-item-' + data.current_page_number);
+            $('.page-item.active').removeClass('active');
+            $( '#page-item-' + data.current_page_number ).addClass('active');
+        },
+
+        getDataTime: function(str) {
+            reg = /\d+/g;
+            str = str.match(reg)
+            '2019-07-17T13:50:42.555872Z'
+            return str[2]+"-"+str[1]+"-"+str[0]+"  "+str[3]+":"+str[4]+":"+str[5]
+
         },
 
         // --- Form methods ---
@@ -284,14 +319,23 @@ $(document).ready(function() {
         init: function() {
             var userId = octopus.getUserId();
             modelData.currentPageEndpoint = `/api/${ userId }/?page=1`;
+            
             this.render( modelData.currentPageEndpoint );
+            
         },
 
         render: function( currentPageEndpoint ) {
             octopus.get( currentPageEndpoint )
             .then( function(data) {
-                octopus.setPagination(data);
+                if ( ! modelData.pagination && ( data.total_pages > 1 ) ) {
+                    octopus.setPagination(data);
+                    modelData.pagination = true; 
+                }
+             
                 octopus.setListOfUrlForCurrentUser(data);
+
+                octopus.setPreviousNextPaginationButtons( data.previous, data.next );
+
                 }, function(error) {
                     console.log(
                         `status: ${error.status}, response: ${error.response}`);

@@ -14,7 +14,8 @@ class ShortUrlView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(ShortUrlView, self).get_context_data(**kwargs)
-        context['title'] = 'Ведите URL и получите короткую ссылку в виде {}/<subpart>'.format(
+        context['title1'] = 'Ведите URL и получите короткую ссылку в виде :'
+        context['title2'] = '{}/<subpart>'.format(
             get_current_site(self.request)
         )
         user_id=self.request.session.get('user_id', 0)
