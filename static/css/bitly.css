@@ -22,6 +22,10 @@ body {
     transition: box-shadow .3s ease-in-out;
 }
 
+.data-url-block {
+	animation: fadein 1s;
+}
+
 .form-block{
 	padding: 1.5rem 1rem;
 }
@@ -32,3 +36,17 @@ body {
 }
 
 
+@keyframes iconIn{
+	from{transform: rotateY(-90deg)}
+	to{transform: rotateY(0deg)}
+}
+
+@keyframes iconOut{
+	from{transform: rotateY(0deg)}
+	to{transform: rotateY(90deg)}
+}
+
+@keyframes fadein{
+	from{opacity: 0;}
+	to{opacity: 1;}
+}

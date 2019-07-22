@@ -212,32 +212,32 @@ $(document).ready(function() {
                 `
                 );
             }
-            
-
-            
         },
 
         setListOfUrlForCurrentUser: function(data) {
+            var self = this;
             var $urlContainer = $('#url-container');
             $urlContainer.children().remove();
             data.results.forEach( (item, index) => {
-                $urlContainer.append (
-                    `<div class="row justify-content-md-center url-block ">
-                        <div class="col-md-7 data-url-block">
-                            <div>
-                                <small class="text-muted">
-                                    ${ this.getDataTime(item.created) }
-                                </small>
+                setTimeout(function() {
+                    $urlContainer.append (
+                        `<div class="row justify-content-md-center url-block ">
+                            <div class="col-md-7 data-url-block">
+                                <div>
+                                    <small class="text-muted">
+                                        ${ self.getDataTime(item.created) }
+                                    </small>
+                                </div>
+                                <div><b>${ item.long_url }</b></div>
+                                <div >
+                                    
+                                    <a class="text-decoration-none" href="${ item.long_url }">${ item.short_url_subpart }</a>      
+                                </div>
                             </div>
-                            <div><b>${ item.long_url }</b></div>
-                            <div >
-                                
-                                <a class="text-decoration-none" href="${ item.long_url }">${ item.short_url_subpart }</a>
-                                                      
-                            </div>
-                        </div>
-                    </div>`
-                );
+                        </div>`
+                    );
+                    console.log('time')
+                     }, index * 200)
             });
             console.log('page-item-' + data.current_page_number);
             $('.page-item.active').removeClass('active');
@@ -299,7 +299,7 @@ $(document).ready(function() {
                 );
                 setTimeout(function() {
                     $('.url-block:first').removeClass('animated bounceInLeft');
-                }, 2000)
+                }, 3000)
             })
         }
     };
