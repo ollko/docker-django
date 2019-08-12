@@ -217,7 +217,7 @@ $(document).ready(function() {
 
         setErrorMessagesToForm: function(error) {
             var err = error.response;
-            $('.form-group-error').remove()
+            $('.form-group-error').remove();
             for ( var key in err ) {
                 newEl = $( "<small>" ,{
                     class: 'form-group-error form-text text-danger ',
@@ -228,11 +228,6 @@ $(document).ready(function() {
                 } else {
                     $('#form-group-long_url').prepend(newEl)
                 }
-            }
-            
-            var non_field_errors = err['non_field_errors']
-            if ( non_field_errors ) {
-
             }
         },
 
@@ -273,8 +268,9 @@ $(document).ready(function() {
                     }, 500 )
                     octopus.post( '/api/', jsonData )
                     .then(function(response) {
-                        // octopus.AddNewUrlPair(response.response);
+                        $('.form-group-error').remove();
                         urlListView.render(`/api/${userId}`);
+                        
                     }, function(error){
                         octopus.setErrorMessagesToForm(error);
                     })
