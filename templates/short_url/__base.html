@@ -11,6 +11,7 @@
     <title>{% block title %}Приложение Docker Mysql{% endblock title%}</title>
   </head>
   <body>
+    <h1 id="user-id">{{ user_id }}</h1>
     {% block content %}  {% endblock content %}
 
     {% block javascript %}
@@ -39,6 +40,7 @@
     </script>
 
     {% endblock javascript %}
+    <script src="{% static 'js/bitly2.js' %}"></script>
     <!-- <script type="text/javascript" src="{% static 'js/bitly.js' %}"></script> -->
 
     {% block javascript2 %}{% endblock javascript2 %}

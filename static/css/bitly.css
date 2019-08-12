@@ -23,7 +23,7 @@ body {
 }
 
 .data-url-block {
-	animation: fadein 1s;
+	animation: fadein .3s;
 }
 
 .form-block{
@@ -47,6 +47,27 @@ body {
 }
 
 @keyframes fadein{
-	from{opacity: 0;}
+	from{opacity: .25;}
 	to{opacity: 1;}
 }
+
+#user-id {
+	position: absolute;
+	right: 1000px;
+    top: 1000px;
+    color: #f4f5f7;
+}
+
+.icon-telegram {
+	color: #007bff;;
+}
+
+.icon-whatsapp {
+	color: green;
+}
+
+.icons {
+	margin-left: 1em;
+}
+
+
