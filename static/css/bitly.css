@@ -70,4 +70,6 @@ body {
 	margin-left: 1em;
 }
 
-
+.short-url {
+	color: green;
+}

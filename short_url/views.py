@@ -29,14 +29,6 @@ class ShortUrlView(TemplateView):
 class UrlRedirectView(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
-        # url = super(UrlRedirectView, self).get_redirect_url(*args, **kwargs)
-        # try:
-        #     short_url = kwargs['short_url']
-        # except KeyError:
-        #     raise Http404()
-        # obj = get_object_or_404(Url, short_url_subpart = short_url)
-        # return obj.long_url
-
         try:
             short_url = kwargs['short_url']
         except KeyError:

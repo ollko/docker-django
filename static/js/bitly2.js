@@ -158,6 +158,7 @@ $(document).ready(function() {
 
         setListOfUrlForCurrentUser: function(data) {
             var self = this;
+            var host = window.location.host;
             var $urlContainer = $('#url-container');
             $urlContainer.children().remove();
             data.results.forEach( (item, index) => {
@@ -171,18 +172,14 @@ $(document).ready(function() {
                                             ${ self.getDateTime(item.created) }
                                         </small>
                                     </div>
-                                    <div class="float-right">
-                                        <span class="icon-telegram icons"></span>
-                                        <span class="icon-whatsapp icons"></span>
-                                        
-                                    </div>
+
                                     
                                 </div>
                                 <br>
                                 <div><b>${ item.long_url }</b></div>
                                 <div>
                                     
-                                    <div class="float-left"><a class="text-decoration-none" href="${ item.long_url }">${ item.short_url_subpart }</a></div>
+                                    <div class="float-left short-url">${ host }/${ item.short_url_subpart }</div>
                                     <div class="float-right"><span class="icon-bin text-muted"></span></div>
 
                                 </div>
@@ -230,25 +227,6 @@ $(document).ready(function() {
                 }
             }
         },
-
-        AddNewUrlPair: function(item) {
-            return new Promise(function(resolve, reject) {
-                var $urlContainer = $('#url-container');
-                $urlContainer.prepend(
-                    `<div class="row justify-content-md-center url-block animated bounceInLeft">
-                        <div class="col-md-7 data-url-block">
-                        <time class="bitlink-item--created-date" datetime="2019-06-28">Jun 28</time>
-                            <p>${ item.created }</p>
-                            <p>${ item.long_url }</p>
-                            <p><a href="${ item.long_url }">${ item.short_url_subpart }</a></p>
-                        </div>
-                    </div>`
-                );
-                setTimeout(function() {
-                    $('.url-block:first').removeClass('animated bounceInLeft');
-                }, 3000)
-            })
-        }
     };
 
     var formView = {
@@ -318,4 +296,10 @@ $(document).ready(function() {
     }
 
     octopus.init();
-})   
+})
+
+// <div class="float-right">
+//     <span class="icon-telegram icons"></span>
+//     <span class="icon-whatsapp icons"></span>
+    
+// </div>
