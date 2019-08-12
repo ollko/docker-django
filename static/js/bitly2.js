@@ -26,8 +26,8 @@ $(document).ready(function() {
                 reg.open('GET', url, true);
                 reg.onload = function() {
                     if (reg.readyState == 4 && reg.status == 200) {
-                        // console.log(reg.statusText)
-                        // console.log(reg.response)
+                        console.log(reg.statusText)
+                        console.log(reg.response)
                         resolve(JSON.parse(reg.response));
                     } else {
                         console.log('reg.readyState = ',reg.readyState)
@@ -92,7 +92,6 @@ $(document).ready(function() {
             $pagination.on('click', 'li.page-item-button', function() {
                 
                 if ( ! modelData.paginationButtonBlocked ) {
-                    console.log('click')
                     modelData.paginationButtonBlocked = true;
                     var buttonNumber = $( this ).text();
                     var currentPageEndpoint = `/api/${ userId }/?page=${buttonNumber}`;
@@ -102,7 +101,6 @@ $(document).ready(function() {
                 
                 setTimeout(function(){
                                     modelData.paginationButtonBlocked = false;
-                                    console.log('click2')
                                     }, 500);
                 
             });
@@ -191,8 +189,7 @@ $(document).ready(function() {
                             </div>
                         </div>`
                     );
-                    console.log('time')
-                     }, index * 100)
+                }, index * 100)
             });
             console.log('page-item-' + data.current_page_number);
             $('.page-item.active').removeClass('active');
@@ -312,10 +309,10 @@ $(document).ready(function() {
                 }
              
                 octopus.setListOfUrlForCurrentUser(data);
+                if (data.total_pages > 1) {
+                    octopus.setPreviousNextPaginationButtons( data.previous, data.next );
+                }
 
-                octopus.setPreviousNextPaginationButtons( data.previous, data.next );
-                
-                
                 }, function(error) {
                     console.log(
                         `status: ${error.status}, response: ${error.response}`);
