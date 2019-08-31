@@ -1,0 +1,25 @@
+version: "3.1"
+
+services:
+
+  django:
+    build: ./docker/django
+    container_name: ${PROJECT_NAME}-django
+    command: gunicorn ${PROJECT_NAME}-django.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/application
+      - ./staticfiles:/usr/src/app/staticfiles
+      - ./mediafiles:/usr/src/app/mediafiles
+    ports:
+      - "8000:8000"
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - ./nginx/conf.d:/etc/nginx
+      - ./staticfiles:/usr/src/app/staticfiles
+      - ./mediafiles:/usr/src/app/mediafiles
+    ports:
+      - 80:80
+    depends_on:
+      - django
