@@ -14,7 +14,7 @@ services:
       - "8000:8000"
 
   nginx:
-    build: ./nginx
+    build: ./docker/nginx
     volumes:
       - ./nginx/conf.d:/etc/nginx
       - ./staticfiles:/usr/src/app/staticfiles
