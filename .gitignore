@@ -71,5 +71,5 @@ local_settings.py
 apps/forge/migrations/0*
 apps/users/migrations/0*
 
-.env
+# .env
 db.sqlite3
