@@ -4,6 +4,7 @@ services:
 
   django:
     build: ./docker/django
+    image: django
     container_name: ${PROJECT_NAME}-django
     command: gunicorn ${PROJECT_NAME}-django.wsgi:application --bind 0.0.0.0:8000
     volumes:
