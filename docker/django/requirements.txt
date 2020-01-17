@@ -3,3 +3,4 @@ mysqlclient
 djangorestframework
 django-redis
 gunicorn
+django-gm2m

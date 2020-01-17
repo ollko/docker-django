@@ -32,7 +32,7 @@ services:
         - MYSQL_USER=dbuser
         - MYSQL_PASSWORD=dbpw
       ports:
-        - "8306:3306"
+        - "9306:3306"
 
     redis:
       image: "redis"
@@ -49,7 +49,7 @@ services:
       volumes:
         - .:/application
       ports:
-        - "8000:8000"
+        - "8888:8000"
       depends_on:
         - mysql
         - redis

@@ -39,8 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'gm2m',
 
     'short_url',
+    'matrixblock',
 ]
 
 REST_FRAMEWORK = {
